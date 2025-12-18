@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fictional Archive Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Frontend for a fictional game archive with client-side hashed password authentication.">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f0f0f;
+      color: #e0e0e0;
+    }
+    header {
+      background: #000;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 2px solid #333;
+    }
+    .disclaimer {
+      background: #1a1a1a;
+      padding: 12px;
+      text-align: center;
+      font-size: 13px;
+      color: #aaa;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+    .login-box {
+      max-width: 400px;
+      margin: 50px auto;
+      background: #151515;
+      padding: 20px;
+      border: 1px solid #333;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      background: #000;
+      color: #fff;
+      border: 1px solid #333;
+    }
+    button:hover {
+      background: #333;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #333;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background: #222;
+    }
+    .hidden { display: none; }
+    footer {
+      text-align: center;
+      font-size: 12px;
+      color: #777;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>FICTIONAL STATE ARCHIVE</h1>
+  <p>Game Lore • Secure Access</p>
+</header>
+
+<div class="disclaimer">
+  This website is fictional and for a virtual game/demo only. Authentication is client-side.
+</div>
+
+<div class="container" id="loginSection">
+  <div class="login-box">
+    <h2>Login</h2>
+    <input id="password" type="password" placeholder="Enter password">
+    <button onclick="login()">Login</button>
+    <p id="loginMsg" style="font-size:12px;color:#ff6666;"></p>
+  </div>
+</div>
+
+<div class="container hidden" id="dashboardSection">
+  <h2>NPC Database</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Zone</th>
+        <th>Unit</th>
+        <th>Role</th>
+      </tr>
+    </thead>
+    <tbody id="npcTable"></tbody>
+  </table>
+  <button onclick="logout()" style="margin-top:20px;">Logout</button>
+</div>
+
+<footer>
+  Fully client-side demo. No backend required.
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
+<script>
+// === CLIENT-SIDE PASSWORD HASH ===
+const HASHED_PASSWORD = '$2a$10$M.z2ZrOapC/m5aFMjSpDreWpiKKQ8wD5rtIhXYMXejCC2r5F4pz1i';
+
+// NPC data (fake database)
+const npcs = [
+  {id:1,name:'NPC-01',zone:'A',unit:'12',role:'Worker'},
+  {id:2,name:'NPC-02',zone:'B',unit:'44',role:'Engineer'},
+  {id:3,name:'NPC-03',zone:'C',unit:'7',role:'Scientist'}
+];
+
+function login(){
+  const pw = document.getElementById('password').value;
+  const msg = document.getElementById('loginMsg');
+  bcrypt.compare(pw,HASHED_PASSWORD,function(err,res){
+    if(res){
+      document.getElementById('loginSection').classList.add('hidden');
+      document.getElementById('dashboardSection').classList.remove('hidden');
+      loadNPCs();
+    } else {
+      msg.textContent='Wrong password';
+    }
+  });
+}
+
+function loadNPCs(){
+  const tbody = document.getElementById('npcTable');
+  tbody.innerHTML='';
+  npcs.forEach(n=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${n.id}</td><td>${n.name}</td><td>${n.zone}</td><td>${n.unit}</td><td>${n.role}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function logout(){
+  document.getElementById('dashboardSection').classList.add('hidden');
+  document.getElementById('loginSection').classList.remove('hidden');
+  document.getElementById('password').value='';
+  document.getElementById('loginMsg').textContent='';
+}
+</script>
+
+</body>
+</html>
